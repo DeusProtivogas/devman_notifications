@@ -5,11 +5,11 @@ import requests
 from environs import Env
 from time import sleep
 
-env = Env()
-env.read_env()
-
 
 def main():
+    env = Env()
+    env.read_env()
+
     api_key = os.environ.get('API_KEY')
 
     telegram_key = os.environ.get('TELEGRAM_BOT_TOKEN')
