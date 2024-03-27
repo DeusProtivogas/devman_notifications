@@ -10,7 +10,7 @@ def main():
     env = Env()
     env.read_env()
 
-    api_key = os.environ.get('API_KEY')
+    api_key = os.environ.get('DEVMAN_API_KEY')
 
     telegram_key = os.environ.get('TELEGRAM_BOT_TOKEN')
 
@@ -25,18 +25,24 @@ def main():
     }
     params = {}
 
-    timeout_timer = 90
+    timeout_timer = 3
 
     while True:
         try:
-            request = requests.get(
+            response = requests.get(
                 long_polling_url,
                 params=params,
                 headers=headers,
                 timeout=timeout_timer,
             )
 
-            review = json.loads(request.text).get("new_attempts")[0]
+            response.raise_for_status()
+            if response.json()['status'] == 'timeout':
+                raise requests.exceptions.ReadTimeout
+            if 'error' in response.json():
+                raise requests.exceptions.HTTPError(response.json()['error'])
+
+            review = response.json().get("new_attempts")[0]
 
             timestamp = review.get("timestamp")
             params = {
@@ -54,8 +60,10 @@ def main():
                 chat_id=chat_id,
                 text=message,
             )
+        except requests.exceptions.HTTPError:
+            print("Bad request")
         except requests.exceptions.ReadTimeout:
-            print("No reviews detected")
+            continue
         except requests.exceptions.ConnectionError:
             print("No internet connection")
             sleep(timeout_timer)
