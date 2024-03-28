@@ -37,17 +37,21 @@ def main():
             )
 
             response.raise_for_status()
-            if response.json()['status'] == 'timeout':
-                raise requests.exceptions.ReadTimeout
-            if 'error' in response.json():
-                raise requests.exceptions.HTTPError(response.json()['error'])
 
-            review = response.json().get("new_attempts")[0]
+            response_json = response.json()
+
+            if response_json['status'] == 'timeout':
+                params = {'timestamp': response.json()['timestamp_to_request']}
+                continue
+
+            review = response_json.get("new_attempts")[0]
 
             timestamp = review.get("timestamp")
             params = {
                 'timestamp ': timestamp,
             }
+
+            unnecessary = ''
 
             lesson_title = review.get("lesson_title")
             is_negative = review.get("is_negative")
