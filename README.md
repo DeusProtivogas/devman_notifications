@@ -13,7 +13,7 @@ pip install -r requirements.txt
 * Создать в корне файл ``.env``
 
 * Разместить в нем:
-  API_KEY - ключ от API Devman
+  DEVMAN_API_KEY - ключ от API Devman
   TELEGRAM_BOT_TOKEN - токен от бота в телеграме
 
 ```
