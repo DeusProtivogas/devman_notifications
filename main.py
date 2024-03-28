@@ -51,8 +51,6 @@ def main():
                 'timestamp ': timestamp,
             }
 
-            unnecessary = ''
-
             lesson_title = review.get("lesson_title")
             is_negative = review.get("is_negative")
             lesson_url = review.get("lesson_url")
