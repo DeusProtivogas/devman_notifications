@@ -38,13 +38,13 @@ def main():
 
             response.raise_for_status()
 
-            response_json = response.json()
+            attempts_status = response.json()
 
-            if response_json['status'] == 'timeout':
-                params = {'timestamp': response.json()['timestamp_to_request']}
+            if attempts_status['status'] == 'timeout':
+                params = {'timestamp': attempts_status['timestamp_to_request']}
                 continue
 
-            review = response_json.get("new_attempts")[0]
+            review = attempts_status.get("new_attempts")[0]
 
             timestamp = review.get("timestamp")
             params = {
