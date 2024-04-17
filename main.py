@@ -5,6 +5,7 @@ import requests
 from environs import Env
 from time import sleep
 
+import logging
 
 def main():
     env = Env()
@@ -26,6 +27,9 @@ def main():
     params = {}
 
     timeout_timer = 3
+
+    logging.basicConfig(level=logging.DEBUG)
+    logging.info('Beginning bot')
 
     while True:
         try:
