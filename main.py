@@ -4,8 +4,21 @@ import telegram
 import requests
 from environs import Env
 from time import sleep
-
 import logging
+
+
+class TelegramLogsHandler(logging.Handler):
+
+    def __init__(self, tg_bot, chat_id):
+        super().__init__()
+        logging.basicConfig(format="%(process)d %(levelname)s %(message)s")
+        self.chat_id = chat_id
+        self.tg_bot = tg_bot
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
+
 
 def main():
     env = Env()
@@ -20,6 +33,12 @@ def main():
     updates = bot.get_updates()
     chat_id = updates[0].message.from_user.id
 
+    logger = logging.getLogger("Telegram logger")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(TelegramLogsHandler(bot, chat_id))
+
+    logger.info("Бот запущен")
+
     long_polling_url = "https://dvmn.org/api/long_polling/"
     headers = {
         'Authorization': f'Token {api_key}',
@@ -27,9 +46,6 @@ def main():
     params = {}
 
     timeout_timer = 3
-
-    logging.basicConfig(level=logging.DEBUG)
-    logging.info('Beginning bot')
 
     while True:
         try:
@@ -68,10 +84,12 @@ def main():
             )
         except requests.exceptions.HTTPError:
             print("Bad request")
+            logger.warning("Bad request")
         except requests.exceptions.ReadTimeout:
             continue
         except requests.exceptions.ConnectionError:
             print("No internet connection")
+            logger.warning("No internet connection")
             sleep(timeout_timer)
 
 
