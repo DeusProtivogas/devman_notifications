@@ -1,6 +1,7 @@
 import os
 import json
 import telegram
+import traceback
 import requests
 from environs import Env
 from time import sleep
@@ -91,6 +92,10 @@ def main():
             print("No internet connection")
             logger.warning("No internet connection")
             sleep(timeout_timer)
+        except Exception as error:
+            logger.error(traceback.format_exc())
+            sleep(timeout_timer)
+
 
 
 if __name__ == '__main__':
