@@ -7,6 +7,8 @@ from environs import Env
 from time import sleep
 import logging
 
+logger = logging.getLogger("Telegram logger")
+
 
 class TelegramLogsHandler(logging.Handler):
 
@@ -34,8 +36,6 @@ def main():
     updates = bot.get_updates()
     chat_id = updates[0].message.from_user.id
 
-    logger = logging.getLogger("Telegram logger")
-    logger.setLevel(logging.INFO)
     logger.addHandler(TelegramLogsHandler(bot, chat_id))
 
     logger.info("Бот запущен")
@@ -99,5 +99,6 @@ def main():
 
 
 if __name__ == '__main__':
+    logger.setLevel(logging.INFO)
     main()
 
